@@ -12,18 +12,21 @@ st.set_page_config(
 
 @st.cache_resource
 def load_model():
-    model_path = 'models/loan_default_model.pkl'
-    scaler_path = 'models/scaler.pkl'
+    improved_model_path = 'models/loan_default_model_improved.pkl'
+    improved_scaler_path = 'models/scaler_improved.pkl'
+    rf_model_path = 'models/loan_default_rf_model.pkl'
     
-    if not os.path.exists(model_path) or not os.path.exists(scaler_path):
-        st.error("Model files not found! Please run 'train_model.py' first.")
+    if os.path.exists(improved_model_path) and os.path.exists(improved_scaler_path):
+        model = joblib.load(improved_model_path)
+        scaler = joblib.load(improved_scaler_path)
+        use_improved = True
+    else:
+        st.error("Improved model files not found! Please run 'python train_model_improved.py' first.")
         st.stop()
     
-    model = joblib.load(model_path)
-    scaler = joblib.load(scaler_path)
-    return model, scaler
+    return model, scaler, use_improved
 
-model, scaler = load_model()
+model, scaler, use_improved = load_model()
 
 st.title("💰 Loan Default Prediction System")
 st.markdown("---")
@@ -61,8 +64,20 @@ with col1:
         submitted = st.form_submit_button("🔮 Predict Default Risk", use_container_width=True)
         
         if submitted:
-            input_data = np.array([[employed_value, bank_balance, annual_salary]])
-            input_scaled = scaler.transform(input_data)
+            if use_improved:
+                import pandas as pd
+                x_input = pd.DataFrame({
+                    'Employed': [employed_value],
+                    'Bank Balance': [bank_balance],
+                    'Annual Salary': [annual_salary]
+                })
+                x_input['Savings_Ratio'] = x_input['Bank Balance'] / (x_input['Annual Salary'] + 1)
+                x_input['Monthly_Salary'] = x_input['Annual Salary'] / 12
+                x_input['Balance_to_Salary'] = x_input['Bank Balance'] / (x_input['Monthly_Salary'] + 1)
+                input_scaled = scaler.transform(x_input)
+            else:
+                input_data = np.array([[employed_value, bank_balance, annual_salary]])
+                input_scaled = scaler.transform(input_data)
             
             prediction = model.predict(input_scaled)[0]
             probability = model.predict_proba(input_scaled)[0]
