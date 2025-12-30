@@ -122,3 +122,19 @@ python tests/test_prediction.py
 
 - Python 3.8+
 - See `requirements.txt` for package versions
+
+## Deployment
+
+### Deploy to Streamlit Cloud
+
+This app is ready for deployment on Streamlit Cloud. See `DEPLOYMENT.md` for detailed instructions.
+
+**Quick steps:**
+1. Push your code to a GitHub repository
+2. Go to [share.streamlit.io](https://share.streamlit.io/)
+3. Sign in with GitHub
+4. Click "New app"
+5. Set **Main file path** to: `src/app.py`
+6. Deploy!
+
+**Important:** Make sure the `models/` directory with all `.pkl` files is included in your repository.
