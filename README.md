@@ -2,15 +2,16 @@
 
 A machine learning application that predicts the likelihood of loan default based on applicant information.
 
+🔗 **Live App**: [https://loan-default-prediction-kr.streamlit.app/](https://loan-default-prediction-kr.streamlit.app/)
+
 ## Features
 
-- 🎯 **Accurate Predictions**: Multiple model options (Random Forest, Improved Logistic Regression) with high accuracy
-- 💻 **User-Friendly Interface**: Streamlit web application
-- 📊 **Real-time Probability**: Shows both default and repayment probabilities
-- 🔄 **Easy to Use**: Simple form-based input with financial health indicators
-- 🧠 **Feature Engineering**: Advanced feature engineering for better predictions
+- 🎯 Multiple model options (Random Forest, Improved Logistic Regression) with ~97% accuracy
+- 💻 User-friendly Streamlit web interface
+- 📊 Real-time probability predictions with financial health indicators
+- 🧠 Advanced feature engineering for better predictions
 
-## Setup
+## Quick Start
 
 ### 1. Install Dependencies
 
@@ -20,121 +21,50 @@ pip install -r requirements.txt
 
 ### 2. Train the Model
 
-First, train and save the model:
-
 ```bash
 python scripts/train_model.py
 ```
 
-This will:
+This trains both Logistic Regression and Random Forest models and saves them to `models/` directory.
 
-- Load the dataset (`data/Default_Fin.csv`)
-- Train Improved Logistic Regression and Random Forest models
-- Save the models and scaler to `models/` directory
-
-### 3. Run the Streamlit App
+### 3. Run the App
 
 ```bash
 python -m streamlit run src/app.py
 ```
 
-**Alternative:** If `streamlit` is in your PATH:
-
-```bash
-streamlit run src/app.py
-```
-
-The app will open in your browser automatically (usually at `http://localhost:8501`).
-
-## Usage
-
-1. Enter the applicant's information:
-
-   - **Personal Information**: Age, Marital Status
-   - **Employment Status**: Employed or Unemployed
-   - **Financial Information**: Bank Balance, Annual Salary, Credit Score
-   - **Loan Details**: Loan Amount, Loan Term
-
-2. Click **"Predict Default Risk"** button
-
-3. View the prediction results:
-   - Default risk status (High Risk / No Risk)
-   - Probability percentages
-   - Visual progress bars
-   - Financial health indicators
-
 ## Project Structure
 
 ```
 loan-default-prediction/
-├── src/
-│   └── app.py                 # Streamlit web application
-├── scripts/
-│   └── train_model.py         # Model training script
-├── tests/
-│   └── test_prediction.py     # Test cases for predictions
-├── docs/
-│   ├── MODEL_IMPROVEMENTS.md  # Model analysis and improvements
-│   ├── QUICK_START_IMPROVED.md # Quick start guide
-│   └── TEST_CASES.md          # Test case documentation
-├── data/
-│   └── Default_Fin.csv        # Dataset
-├── models/                    # Saved models (created after training)
-│   ├── loan_default_model_improved.pkl
-│   ├── loan_default_rf_model.pkl
-│   └── scaler_improved.pkl
-├── requirements.txt           # Python dependencies
-├── loan-default-prediction.ipynb # Jupyter notebook for exploration
-└── README.md                  # This file
+├── src/app.py              # Streamlit application
+├── scripts/train_model.py  # Model training script
+├── models/                 # Trained model files (.pkl)
+├── data/                   # Dataset
+├── tests/                  # Test scripts
+└── requirements.txt        # Python dependencies
 ```
 
 ## Model Details
 
-- **Algorithms**:
-  - Improved Logistic Regression with Feature Engineering
-  - Random Forest Classifier
-- **Features**:
-  - Employment Status (binary)
-  - Bank Balance (continuous)
-  - Annual Salary (continuous)
-  - Savings Ratio (engineered)
-  - Monthly Salary (engineered)
-  - Balance-to-Salary Ratio (engineered)
-- **Preprocessing**: StandardScaler normalization
-- **Class Handling**: Balanced class weights for imbalanced data
+- **Algorithms**: Improved Logistic Regression, Random Forest Classifier
+- **Features**: Employment Status, Bank Balance, Annual Salary, and engineered features
 - **Accuracy**: ~97% on test set
+- **Preprocessing**: StandardScaler normalization with class balancing
 
-## Testing
+## Usage
 
-Run the test suite to verify model predictions:
-
-```bash
-python tests/test_prediction.py
-```
+1. Enter applicant information (Employment Status, Bank Balance, Annual Salary, etc.)
+2. Click "Predict Default Risk"
+3. View prediction results with probability percentages and financial health indicators
 
 ## Documentation
 
-- See `docs/MODEL_IMPROVEMENTS.md` for detailed model analysis
-- See `docs/QUICK_START_IMPROVED.md` for quick start guide
-- See `docs/TEST_CASES.md` for test case documentation
+- `DEPLOYMENT.md` - Deployment guide for Streamlit Cloud
+- `docs/TEST_CASES.md` - Test case scenarios
+- `docs/MODEL_IMPROVEMENTS.md` - Model analysis and improvements
 
 ## Requirements
 
 - Python 3.8+
 - See `requirements.txt` for package versions
-
-## Deployment
-
-### Deploy to Streamlit Cloud
-
-This app is ready for deployment on Streamlit Cloud. See `DEPLOYMENT.md` for detailed instructions.
-
-**Quick steps:**
-1. Push your code to a GitHub repository
-2. Go to [share.streamlit.io](https://share.streamlit.io/)
-3. Sign in with GitHub
-4. Click "New app"
-5. Set **Main file path** to: `src/app.py`
-6. Deploy!
-
-**Important:** Make sure the `models/` directory with all `.pkl` files is included in your repository.
