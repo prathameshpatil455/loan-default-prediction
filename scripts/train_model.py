@@ -8,7 +8,11 @@ from sklearn.metrics import classification_report, confusion_matrix, roc_auc_sco
 import joblib
 import os
 
-df = pd.read_csv('Default_Fin.csv')
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(script_dir)
+data_path = os.path.join(project_root, 'data', 'Default_Fin.csv')
+
+df = pd.read_csv(data_path)
 df_main = df.drop('Index', axis=1)
 
 x = df_main.drop('Defaulted?', axis=1)
@@ -75,10 +79,11 @@ importances = rf_model.feature_importances_
 for name, importance in zip(feature_names, importances):
     print(f"   {name}: {importance:.4f}")
 
-os.makedirs('models', exist_ok=True)
-joblib.dump(model_fe, 'models/loan_default_model_improved.pkl')
-joblib.dump(scaler_fe, 'models/scaler_improved.pkl')
-joblib.dump(rf_model, 'models/loan_default_rf_model.pkl')
+models_dir = os.path.join(project_root, 'models')
+os.makedirs(models_dir, exist_ok=True)
+joblib.dump(model_fe, os.path.join(models_dir, 'loan_default_model_improved.pkl'))
+joblib.dump(scaler_fe, os.path.join(models_dir, 'scaler_improved.pkl'))
+joblib.dump(rf_model, os.path.join(models_dir, 'loan_default_rf_model.pkl'))
 
 print("\n" + "=" * 70)
 print("Models saved to 'models/' directory")

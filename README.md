@@ -4,10 +4,11 @@ A machine learning application that predicts the likelihood of loan default base
 
 ## Features
 
-- 🎯 **Accurate Predictions**: Logistic Regression model with ~97% accuracy
+- 🎯 **Accurate Predictions**: Multiple model options (Random Forest, Improved Logistic Regression) with high accuracy
 - 💻 **User-Friendly Interface**: Streamlit web application
 - 📊 **Real-time Probability**: Shows both default and repayment probabilities
-- 🔄 **Easy to Use**: Simple form-based input
+- 🔄 **Easy to Use**: Simple form-based input with financial health indicators
+- 🧠 **Feature Engineering**: Advanced feature engineering for better predictions
 
 ## Setup
 
@@ -22,28 +23,37 @@ pip install -r requirements.txt
 First, train and save the model:
 
 ```bash
-python train_model.py
+python scripts/train_model.py
 ```
 
 This will:
-- Load the dataset (`Default_Fin.csv`)
-- Train a Logistic Regression model
-- Save the model and scaler to `models/` directory
+
+- Load the dataset (`data/Default_Fin.csv`)
+- Train Improved Logistic Regression and Random Forest models
+- Save the models and scaler to `models/` directory
 
 ### 3. Run the Streamlit App
 
 ```bash
-streamlit run app.py
+python -m streamlit run src/app.py
 ```
 
-The app will open in your browser automatically.
+**Alternative:** If `streamlit` is in your PATH:
+
+```bash
+streamlit run src/app.py
+```
+
+The app will open in your browser automatically (usually at `http://localhost:8501`).
 
 ## Usage
 
 1. Enter the applicant's information:
+
+   - **Personal Information**: Age, Marital Status
    - **Employment Status**: Employed or Unemployed
-   - **Bank Balance**: Current bank balance in ₹
-   - **Annual Salary**: Annual salary in ₹
+   - **Financial Information**: Bank Balance, Annual Salary, Credit Score
+   - **Loan Details**: Loan Amount, Loan Term
 
 2. Click **"Predict Default Risk"** button
 
@@ -51,33 +61,64 @@ The app will open in your browser automatically.
    - Default risk status (High Risk / No Risk)
    - Probability percentages
    - Visual progress bars
+   - Financial health indicators
 
 ## Project Structure
 
 ```
 loan-default-prediction/
-├── app.py                 # Streamlit web application
-├── train_model.py         # Model training script
-├── Default_Fin.csv        # Dataset
-├── models/                # Saved models (created after training)
-│   ├── loan_default_model.pkl
-│   └── scaler.pkl
-├── requirements.txt       # Python dependencies
-└── README.md             # This file
+├── src/
+│   └── app.py                 # Streamlit web application
+├── scripts/
+│   └── train_model.py         # Model training script
+├── tests/
+│   └── test_prediction.py     # Test cases for predictions
+├── docs/
+│   ├── MODEL_IMPROVEMENTS.md  # Model analysis and improvements
+│   ├── QUICK_START_IMPROVED.md # Quick start guide
+│   └── TEST_CASES.md          # Test case documentation
+├── data/
+│   └── Default_Fin.csv        # Dataset
+├── models/                    # Saved models (created after training)
+│   ├── loan_default_model_improved.pkl
+│   ├── loan_default_rf_model.pkl
+│   └── scaler_improved.pkl
+├── requirements.txt           # Python dependencies
+├── loan-default-prediction.ipynb # Jupyter notebook for exploration
+└── README.md                  # This file
 ```
 
 ## Model Details
 
-- **Algorithm**: Logistic Regression with Cross-Validation
-- **Features**: 
+- **Algorithms**:
+  - Improved Logistic Regression with Feature Engineering
+  - Random Forest Classifier
+- **Features**:
   - Employment Status (binary)
   - Bank Balance (continuous)
   - Annual Salary (continuous)
+  - Savings Ratio (engineered)
+  - Monthly Salary (engineered)
+  - Balance-to-Salary Ratio (engineered)
 - **Preprocessing**: StandardScaler normalization
+- **Class Handling**: Balanced class weights for imbalanced data
 - **Accuracy**: ~97% on test set
+
+## Testing
+
+Run the test suite to verify model predictions:
+
+```bash
+python tests/test_prediction.py
+```
+
+## Documentation
+
+- See `docs/MODEL_IMPROVEMENTS.md` for detailed model analysis
+- See `docs/QUICK_START_IMPROVED.md` for quick start guide
+- See `docs/TEST_CASES.md` for test case documentation
 
 ## Requirements
 
 - Python 3.8+
 - See `requirements.txt` for package versions
-

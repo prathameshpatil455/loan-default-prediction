@@ -5,16 +5,18 @@ import joblib
 import os
 
 st.set_page_config(
-    page_title="Loan Default Prediction (Improved)",
+    page_title="Loan Default Prediction",
     page_icon="💰",
     layout="wide"
 )
 
 @st.cache_resource
 def load_models():
-    improved_model_path = 'models/loan_default_model_improved.pkl'
-    improved_scaler_path = 'models/scaler_improved.pkl'
-    rf_model_path = 'models/loan_default_rf_model.pkl'
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(script_dir)
+    improved_model_path = os.path.join(project_root, 'models', 'loan_default_model_improved.pkl')
+    improved_scaler_path = os.path.join(project_root, 'models', 'scaler_improved.pkl')
+    rf_model_path = os.path.join(project_root, 'models', 'loan_default_rf_model.pkl')
     
     models_available = {
         'improved_lr': os.path.exists(improved_model_path) and os.path.exists(improved_scaler_path),
@@ -22,7 +24,7 @@ def load_models():
     }
     
     if not any(models_available.values()):
-        st.warning("⚠️ Improved models not found. Run 'python train_model_improved.py' first.")
+        st.warning("⚠️ Improved models not found. Run 'python scripts/train_model.py' first.")
         st.info("Falling back to basic model...")
         return None, None, None, None
     
@@ -34,7 +36,7 @@ def load_models():
 
 improved_model, scaler, rf_model, models_available = load_models()
 
-st.title("💰 Loan Default Prediction System (Improved)")
+st.title("💰 Loan Default Prediction System")
 st.markdown("---")
 
 if models_available and any(models_available.values()):
@@ -90,15 +92,15 @@ with col1:
                 min_value=0.0,
                 value=10000.0,
                 step=1000.0,
-                help="Enter the current bank balance"
+                help="Enter the current bank balance (must be non-negative)"
             )
             
             annual_salary = st.number_input(
                 "Annual Salary (₹) *",
-                min_value=0.0,
+                min_value=1.0,
                 value=300000.0,
                 step=10000.0,
-                help="Enter the annual salary"
+                help="Enter the annual salary (must be greater than zero)"
             )
         
         with col_f2:
@@ -135,6 +137,30 @@ with col1:
         submitted = st.form_submit_button("🔮 Predict Default Risk", use_container_width=True)
         
         if submitted:
+            validation_errors = []
+            
+            if annual_salary <= 0:
+                validation_errors.append("❌ Annual Salary must be greater than zero")
+            
+            if bank_balance < 0:
+                validation_errors.append("❌ Bank Balance cannot be negative")
+            
+            if annual_salary == 0 and bank_balance == 0:
+                validation_errors.append("❌ Cannot process: Both income and balance are zero")
+            
+            if annual_salary < 50000 and bank_balance < 1000:
+                validation_errors.append("⚠️ Warning: Very low income with minimal savings - High risk")
+            
+            if loan_amount > 0 and annual_salary > 0 and (loan_amount / annual_salary) > 5:
+                validation_errors.append("⚠️ Warning: Loan amount is more than 5x annual salary - Extremely high risk")
+            
+            if validation_errors:
+                st.error("**Input Validation Failed:**")
+                for error in validation_errors:
+                    st.error(error)
+                st.info("Please correct the inputs and try again.")
+                st.stop()
+            
             if models_available and any(models_available.values()):
                 x_input = pd.DataFrame({
                     'Employed': [employed_value],
@@ -286,5 +312,5 @@ with col2:
     
     st.markdown("---")
     if st.button("📚 View Improvement Guide"):
-        st.info("See MODEL_IMPROVEMENTS.md for detailed analysis")
+        st.info("See docs/MODEL_IMPROVEMENTS.md for detailed analysis")
 

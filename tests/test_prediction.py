@@ -2,18 +2,24 @@ import numpy as np
 import pandas as pd
 import joblib
 import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(script_dir)
 
 print("=" * 70)
 print("IMPROVED MODEL PREDICTION TEST")
 print("=" * 70)
 
-improved_model_path = 'models/loan_default_model_improved.pkl'
-scaler_path = 'models/scaler_improved.pkl'
-rf_model_path = 'models/loan_default_rf_model.pkl'
+improved_model_path = os.path.join(project_root, 'models', 'loan_default_model_improved.pkl')
+scaler_path = os.path.join(project_root, 'models', 'scaler_improved.pkl')
+rf_model_path = os.path.join(project_root, 'models', 'loan_default_rf_model.pkl')
 
 if not os.path.exists(improved_model_path) or not os.path.exists(scaler_path):
     print("ERROR: Improved models not found!")
-    print("Please run: python train_model_improved.py")
+    print("Please run: python scripts/train_model.py")
     exit(1)
 
 improved_model = joblib.load(improved_model_path)
